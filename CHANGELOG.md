@@ -1,5 +1,54 @@
 # Changelog
 
+## Unreleased — Onboarding wizard (`autosymph init`)
+
+### Added
+
+- **`autosymph init`** — interactive onboarding wizard that bootstraps a
+  fresh device + project config in one run. Walks through Linear API key
+  validation, project selection, workflow-state diff (with explicit
+  per-state alias confirmation), repo path validation, optional iOS
+  simulator selection, optional Braintrust setup, and writes the
+  generated YAMLs and `local.env` atomically. Linear workflow states
+  that don't yet exist are created via a single combined-preview
+  confirmation; everything is logged to
+  `~/.autosymph/config/wizard-mutations.log`.
+- **`LinearClient.list_projects()`** — paginated query for all projects
+  visible to the API key. Used by the wizard's project picker.
+- **`LinearClient.create_workflow_state()`** — wraps Linear's
+  `workflowStateCreate` mutation. Used by the wizard to provision
+  required states.
+- **`LinearClient.create_label()`** — wraps `issueLabelCreate`.
+  Workspace- or team-scoped. Currently used internally; reserved for
+  future autoplan onboarding.
+- **`LINEAR_API_URL` env override** — `LinearClient.__init__` reads
+  this env var (defaulting to the public Linear endpoint) so test
+  harnesses can redirect API calls to a stub server without
+  monkey-patching.
+- **`docs/init.md`** — what the wizard touches, what it doesn't, how to
+  undo.
+- **`docs/manual-setup.md`** — manual fallback for users who can't or
+  don't want to run the wizard.
+
+### Changed
+
+- **README "Quick Start"** — replaced the manual `cp examples/...` walk
+  with `uv run autosymph init`. The detailed manual instructions live in
+  `docs/manual-setup.md`.
+- **`LinearStatesConfig.active` schema default** — `"In Progress"` →
+  `"Implementing"`. Aligns the schema default with the example YAMLs and
+  README. The wizard's `state_defaults.py` codifies the canonical set.
+
+### Out of scope for this release (tracked as follow-ups)
+
+- Autoplan onboarding (creating `Autoplan` and `Reviewing Evidence`
+  states, the `needs-review` label, and the autoplan-specific config
+  blocks).
+- Model-registry refresh cron + `autosymph-update-configs` skill +
+  GitHub Actions secret guidance.
+- Renaming existing Linear workflow states from the wizard.
+- Multi-project bulk setup; partial-update / re-run flow.
+
 ## Unreleased — Verify review routing and realtime-safe fixtures
 
 ### Changed
