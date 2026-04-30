@@ -45,7 +45,6 @@ from autosymph.wizard.state import (
 from autosymph.wizard.state_defaults import (
     KNOWN_ALIASES,
     REQUIRED_V1,
-    StateDefault,
     find_default,
 )
 
