@@ -72,6 +72,9 @@ class LinearClient:
             if not resolved_key:
                 logger.warning("API key env var %s is not set — Linear requests will fail", api_key)
         self._api_key = resolved_key
+        # LINEAR_API_URL env var lets test harnesses redirect to a stub server.
+        # Undocumented for end users; production should use the default.
+        self.api_url = os.environ.get("LINEAR_API_URL", self.API_URL)
         self._client = httpx.AsyncClient(
             headers={"Authorization": resolved_key, "Content-Type": "application/json"},
             timeout=30.0,
@@ -141,7 +144,7 @@ class LinearClient:
         last_exc: Exception | None = None
         for attempt in range(self.MAX_RETRIES):
             try:
-                resp = await self._client.post(self.API_URL, json=payload)
+                resp = await self._client.post(self.api_url, json=payload)
 
                 if resp.status_code == 429 or resp.status_code >= 500:
                     backoff = self.RETRY_BACKOFF[min(attempt, len(self.RETRY_BACKOFF) - 1)]
@@ -422,6 +425,132 @@ class LinearClient:
         data = await self._query(query)
         nodes = data.get("issueLabels", {}).get("nodes", [])
         return [n["name"] for n in nodes]
+
+    async def list_projects(self) -> list[dict[str, Any]]:
+        """List all projects visible to the API key.
+
+        Returns a list of dicts with keys: id, name, slugId, teamIds. The
+        onboarding wizard uses this to render a numbered project picker.
+        """
+        projects: list[dict[str, Any]] = []
+        cursor: str | None = None
+        while True:
+            query = """
+            query($after: String) {
+                projects(first: 50, after: $after) {
+                    nodes {
+                        id
+                        name
+                        slugId
+                        teams(first: 5) { nodes { id name } }
+                    }
+                    pageInfo { hasNextPage endCursor }
+                }
+            }
+            """
+            data = await self._query(query, {"after": cursor})
+            page = data.get("projects", {})
+            for node in page.get("nodes", []):
+                team_nodes = node.get("teams", {}).get("nodes", [])
+                projects.append({
+                    "id": node["id"],
+                    "name": node["name"],
+                    "slug_id": node.get("slugId"),
+                    "team_ids": [t["id"] for t in team_nodes],
+                    "team_names": [t["name"] for t in team_nodes],
+                })
+            page_info = page.get("pageInfo", {})
+            if not page_info.get("hasNextPage"):
+                break
+            cursor = page_info.get("endCursor")
+        return projects
+
+    async def create_workflow_state(
+        self,
+        team_id: str,
+        name: str,
+        color: str,
+        position: float,
+        state_type: str = "started",
+    ) -> str:
+        """Create a workflow state on the given Linear team via ``workflowStateCreate``.
+
+        ``state_type`` follows Linear's enum: ``triage``, ``backlog``,
+        ``unstarted``, ``started``, ``completed``, ``canceled``. Defaults to
+        ``started`` since the wizard's required-state set is dominated by
+        in-flight states; callers should override for terminals.
+
+        Returns the new state's id. Used by the onboarding wizard to provision
+        autosymph-required workflow states.
+        """
+        mutation = """
+        mutation($input: WorkflowStateCreateInput!) {
+            workflowStateCreate(input: $input) {
+                success
+                workflowState { id name }
+            }
+        }
+        """
+        variables = {
+            "input": {
+                "teamId": team_id,
+                "name": name,
+                "color": color,
+                "position": position,
+                "type": state_type,
+            }
+        }
+        data = await self._query(mutation, variables)
+        result = data.get("workflowStateCreate", {})
+        if not result.get("success"):
+            raise RuntimeError(
+                f"Linear workflowStateCreate failed for {name!r}: {result!r}"
+            )
+        state = result.get("workflowState") or {}
+        state_id = state.get("id")
+        if not state_id:
+            raise RuntimeError(
+                f"Linear workflowStateCreate returned no id for {name!r}: {result!r}"
+            )
+        logger.info("Created Linear state %s on team %s → %s", name, team_id, state_id)
+        return state_id
+
+    async def create_label(
+        self,
+        name: str,
+        color: str,
+        team_id: str | None = None,
+    ) -> str:
+        """Create an issue label via ``issueLabelCreate``.
+
+        Workspace-scoped when ``team_id`` is None; otherwise team-scoped.
+        Returns the label id.
+        """
+        mutation = """
+        mutation($input: IssueLabelCreateInput!) {
+            issueLabelCreate(input: $input) {
+                success
+                issueLabel { id name }
+            }
+        }
+        """
+        input_obj: dict[str, Any] = {"name": name, "color": color}
+        if team_id is not None:
+            input_obj["teamId"] = team_id
+        data = await self._query(mutation, {"input": input_obj})
+        result = data.get("issueLabelCreate", {})
+        if not result.get("success"):
+            raise RuntimeError(
+                f"Linear issueLabelCreate failed for {name!r}: {result!r}"
+            )
+        label = result.get("issueLabel") or {}
+        label_id = label.get("id")
+        if not label_id:
+            raise RuntimeError(
+                f"Linear issueLabelCreate returned no id for {name!r}: {result!r}"
+            )
+        logger.info("Created Linear label %s → %s", name, label_id)
+        return label_id
 
     async def transition_issue(self, issue_id: str, target_status: str) -> None:
         """Move an issue to a new status by name."""

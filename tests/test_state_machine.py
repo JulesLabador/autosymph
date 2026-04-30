@@ -37,7 +37,7 @@ class TestActionableLinearStatusesAutoplan:
         statuses = sm.actionable_linear_statuses()
         # Default-named states present
         assert "Ready" in statuses
-        assert "In Progress" in statuses
+        assert "Implementing" in statuses
         # Autoplan absent
         assert "Autoplan" not in statuses
 
@@ -48,7 +48,7 @@ class TestActionableLinearStatusesAutoplan:
         assert "Autoplan" in statuses
         # Existing statuses still present
         assert "Ready" in statuses
-        assert "In Progress" in statuses
+        assert "Implementing" in statuses
 
     def test_autoplan_custom_name(self):
         """Polling list reflects whatever name is configured (not hardcoded)."""

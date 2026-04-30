@@ -3,3 +3,8 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+
+# Planning artifacts — local working copies; durable copies live as Linear documents
+PRD.md
+task-list.md
+.pytest_cache/
