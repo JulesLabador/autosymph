@@ -119,7 +119,7 @@ def _load_local_env(config_dir: Path | None = None) -> Path | None:
     """Load config-local environment defaults from local.env.
 
     Shell-provided variables win. This lets a machine keep secrets and local
-    startup defaults beside autosymph-config without requiring every launch
+    startup defaults beside the runtime config without requiring every launch
     command to repeat them.
     """
     env_path = (config_dir or _default_config_dir()) / "local.env"

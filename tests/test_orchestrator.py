@@ -251,7 +251,7 @@ class TestPromptResolution:
             states={"done": StateConfig(type="terminal")},
         )
         orch = _make_orchestrator(cfg)
-        orch.config_path = Path("/example/autosymph-config/projects/example.yaml")
+        orch.config_path = Path("/example/config/projects/example.yaml")
 
         resolved = orch._resolve_prompt_path("verify.md")
 

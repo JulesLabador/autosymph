@@ -127,7 +127,7 @@ Create these labels once in Linear workspace/project settings before handing the
 autosymph uses a **layered config** system: devices define WHERE, projects define HOW.
 
 ```
-autosymph-config/
+~/.autosymph/config/
   devices/
     {hostname}.yaml        # device: simulators, ports, agent limits, repo paths
   projects/
@@ -141,7 +141,7 @@ At startup, autosymph finds your device config by hostname, then merges each pro
 Defines the environment for this machine: what resources are available, where repos live, agent concurrency limits.
 
 ```yaml
-# autosymph-config/devices/{hostname}.yaml
+# ~/.autosymph/config/devices/{hostname}.yaml
 
 machine_name: "my-machine"
 
@@ -158,7 +158,7 @@ agent:
     finalize: 1
 
 claude:
-  model: claude-sonnet-4-6
+  model: sonnet
   max_turns: 100
 
 logging:
@@ -176,7 +176,7 @@ projects:
 Defines the workflow for a project: what Linear project to poll, what states exist, what prompts to use.
 
 ```yaml
-# autosymph-config/projects/{project-slug}.yaml
+# ~/.autosymph/config/projects/{project-slug}.yaml
 
 tracker:
   kind: linear
@@ -205,7 +205,7 @@ hooks:
     git rebase origin/main 2>/dev/null || true
 
 prompts:
-  root: ../../autosymph/prompts # canonical prompt directory
+  root: /path/to/autosymph/prompts # canonical prompt directory
   global_prompt: global.md      # prepended to every state prompt
 
 runners:
@@ -239,7 +239,7 @@ states:
     type: agent
     prompt: verify.md
     linear_state: verifying
-    model: claude-opus-4-7      # override model for verification (see Model Registry below)
+    model: opus                 # override model for verification (see Model Registry below)
     session: new
     transitions:
       complete: review
@@ -277,13 +277,13 @@ states:
 
 ### Where to update state prompts
 
-- Edit prompt bodies in [prompts](prompts), not in `autosymph-config`.
+- Edit prompt bodies in [prompts](prompts), not in your runtime config directory.
 - `verify` state behavior lives in [verify.md](prompts/verify.md).
 - `verify_review` behavior lives in [verify-review.md](prompts/verify-review.md).
 - `implement` and `rework` share [implement.md](prompts/implement.md).
 - `finalize` uses [merge.md](prompts/merge.md).
 - Shared instructions across all states live in [global.md](prompts/global.md).
-- Edit `autosymph-config/**/*.yaml` only when you want to change routing, models, tool permissions, state machines, or `prompts.root`.
+- Edit `~/.autosymph/config/**/*.yaml` only when you want to change routing, models, tool permissions, state machines, or `prompts.root`.
 
 ### Where what lives
 
@@ -291,16 +291,16 @@ Quick map of what goes where. When something feels off, this is the table to con
 
 | File / dir | What's in it | Edit when |
 |---|---|---|
-| `autosymph-config/devices/{hostname}.yaml` | This machine's environment: simulators, dev ports, repo paths, agent concurrency, default Claude model. Lists which projects to run on this host. | New device, new simulator, repo moved on disk, want to throttle agent concurrency on this host. |
-| `autosymph-config/projects/{slug}.yaml` | One project's workflow: tracker (Linear project name), state machine (`implement`/`verify`/`review`/…), prompts, transitions, per-state model and tool permissions. | Adding a state, changing a per-state model, retargeting a Linear status name, tightening `allowed_tools`. |
-| `autosymph-config/local.env` *(gitignored)* | Per-device secrets and startup defaults. Loaded by `autosymph start` before config discovery. Shell vars win when both are set. | Storing project-specific secrets or pinning `AUTOSYMPH_CONFIG_DIR` so launches don't have to repeat them. |
-| `autosymph-config/local.env.example` | Template showing the expected keys. | Adding a new local-env key the team should know about. |
-| `autosymph-config/verify-templates/*.md` | Copy-paste-ready prompt fragments (`auth.md`, `fixtures.md`) the verify agent reuses. | Verify needs new shared boilerplate. |
-| `autosymph/prompts/*.md` | The actual agent prompts: `implement.md`, `verify.md`, `verify-review.md`, `merge.md`, `global.md`, `autoplan.md`, `investigating.md`, `scheduled-models-refresh.md`. | Changing what an agent *does* — the YAML routes to a prompt; the prompt is the behavior. |
-| `autosymph/src/autosymph/models.py` | Source of truth for "current" Claude model ids. Rewritten by `autosymph models refresh --apply`. | Never by hand — let the scheduled refresh PR do it. |
-| `autosymph/src/autosymph/` | Orchestrator code. Don't edit unless you mean to. | Bug fix or new state type. |
+| `~/.autosymph/config/devices/{hostname}.yaml` | This machine's environment: simulators, dev ports, repo paths, agent concurrency, default Claude model. Lists which projects to run on this host. | New device, new simulator, repo moved on disk, want to throttle agent concurrency on this host. |
+| `~/.autosymph/config/projects/{slug}.yaml` | One project's workflow: tracker (Linear project name), state machine (`implement`/`verify`/`review`/…), prompts, transitions, per-state model and tool permissions. | Adding a state, changing a per-state model, retargeting a Linear status name, tightening `allowed_tools`. |
+| `~/.autosymph/config/local.env` *(local only)* | Per-device secrets and startup defaults. Loaded by `autosymph start` before config discovery. Shell vars win when both are set. | Storing project-specific secrets or pinning `AUTOSYMPH_CONFIG_DIR` so launches don't have to repeat them. |
+| `examples/config/local.env.example` | Template showing the expected keys. | Adding a new local-env key the team should know about. |
+| `examples/project/.autosymph/verify/*.md` | Copy-paste-ready prompt fragments (`auth.md`, `fixtures.md`) a project can keep beside its app code. | Verify needs project-specific auth, fixtures, iOS, or web instructions. |
+| `prompts/*.md` | The actual agent prompts: `implement.md`, `verify.md`, `verify-review.md`, `merge.md`, `global.md`, `autoplan.md`, `investigating.md`, `scheduled-models-refresh.md`. | Changing what an agent *does* — the YAML routes to a prompt; the prompt is the behavior. |
+| `src/autosymph/models.py` | Source of truth for "current" Claude model ids. Rewritten by `autosymph models refresh --apply`. | Never by hand — let the scheduled refresh PR do it. |
+| `src/autosymph/` | Orchestrator code. Don't edit unless you mean to. | Bug fix or new state type. |
 
-**Layered vs legacy.** Layered (`devices/` + `projects/`) is the only supported format going forward. The single-file format (`autosymph-config/{hostname}.yaml` at top level) is the old layout from before the device/project split — autosymph still falls back to it if `devices/{hostname}.yaml` produces zero valid configs, but the fallback is silent and a footgun. **If you see a top-level `{hostname}.yaml` next to `devices/`, migrate it: split simulators/repo paths into `devices/{hostname}.yaml` and tracker/states into `projects/{slug}.yaml`, then delete the top-level file.**
+**Layered vs legacy.** Layered (`devices/` + `projects/`) is the only supported format going forward. The single-file format (`~/.autosymph/config/{hostname}.yaml` at top level) is the old layout from before the device/project split — autosymph still falls back to it if `devices/{hostname}.yaml` produces zero valid configs, but the fallback is silent and a footgun. **If you see a top-level `{hostname}.yaml` next to `devices/`, migrate it: split simulators/repo paths into `devices/{hostname}.yaml` and tracker/states into `projects/{slug}.yaml`, then delete the top-level file.**
 
 To run a one-off non-layered config (testing, debugging, throwaway), pass `-c`:
 
@@ -422,7 +422,7 @@ One-time, in this order:
          entry: bash -c 'cd autosymph && uv run autosymph models check'
          language: system
          pass_filenames: false
-         files: ^autosymph-config/.*\.yaml$
+         files: ^(\.autosymph/config|config)/.*\.ya?ml$
    ```
 
 ### Day-to-day usage

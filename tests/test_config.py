@@ -232,7 +232,7 @@ class TestFindConfigs:
 
 
 class TestLocalEnv:
-    """Tests for autosymph-config/local.env loading."""
+    """Tests for config-local local.env loading."""
 
     def test_loads_local_env_without_overriding_shell(self, tmp_path, monkeypatch):
         from autosymph.cli import _load_local_env

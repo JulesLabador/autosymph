@@ -261,7 +261,7 @@ class DeviceConfig(BaseModel):
     """Device-level config: environment, resources, per-project repo paths.
 
     Layout:
-        autosymph-config/
+        ~/.autosymph/config/
           devices/{hostname}.yaml   — this file
           projects/{project}.yaml   — project workflow definitions
 

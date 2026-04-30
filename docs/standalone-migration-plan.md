@@ -129,7 +129,6 @@ examples/
 
 Rewrite examples to remove:
 
-- `/Users/example/...`
 - user-local absolute paths
 - personal project names
 - personal secret names
@@ -179,7 +178,7 @@ and lets installer scripts mirror the skills into each agent's discovery path.
 Verification:
 
 ```bash
-rg "/Users/|personal-project-name" README.md AGENTS.md prompts tests src examples
+rg "<private-path-or-project-pattern>" README.md AGENTS.md prompts tests src examples
 uv run pytest
 ```
 
@@ -230,8 +229,7 @@ Primary targets:
 
 - `tests/test_verify_prompt_sync.py`
 - `tests/test_orchestrator.py`
-- any test containing personal absolute paths or sibling
-  `autosymph-config`
+- any test containing personal absolute paths or sibling config directories
 
 Tests should validate packaged examples and repo-local prompts instead of
 reaching outside this repository.

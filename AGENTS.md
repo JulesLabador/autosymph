@@ -3,9 +3,9 @@
 ## Prompt ownership
 
 - Canonical autosymph agent prompts live in this repository under `prompts/`.
-- The external autosymph config directory owns workflow config only: project YAMLs,
+- The external runtime config directory owns workflow config only: project YAMLs,
   device YAMLs, state routing, and `prompts.root` pointers.
-- Do **not** recreate or edit a second prompt copy under `autosymph-config`.
+- Do **not** recreate or edit a second prompt copy under runtime config.
   That drift previously caused live runs to use stale verify instructions even
   after the repo prompt had been fixed.
 - If you need to change autosymph verify / implement / merge / global prompt
