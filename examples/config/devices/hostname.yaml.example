@@ -1,0 +1,35 @@
+# autosymph device config example
+#
+# Copy this file to ~/.autosymph/config/devices/{hostname}.yaml.
+# Find your hostname with: hostname -s | tr '[:upper:]' '[:lower:]'
+
+machine_name: "my-machine"
+
+resources:
+  ios_simulator:
+    # List available simulators: xcrun simctl list devices available
+    - name: "iPhone 17 Pro"
+      udid: "auto"
+  dev_port_range: [3001, 3002, 3003]
+  # railway:
+  #   preview_url_pattern: "https://{service}-pr-{pr_number}.up.railway.app"
+
+agent:
+  max_concurrent_agents: 3
+  max_concurrent_agents_by_state:
+    implement: 2
+    finalize: 1
+
+claude:
+  model: sonnet
+  max_turns: 100
+
+logging:
+  log_root: ~/.autosymph/logs
+
+projects:
+  ios-app:
+    repo: ~/projects/ios-app
+  web-app:
+    repo: ~/projects/web-app
+

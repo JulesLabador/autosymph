@@ -1,0 +1,100 @@
+# autosymph project config example — web app
+#
+# Copy this file to ~/.autosymph/config/projects/{project-slug}.yaml and add
+# the same project slug to your device config.
+
+tracker:
+  kind: linear
+  project: "Web App"
+  api_key: "$LINEAR_API_KEY"
+  # assignee_filter: "me"
+
+polling:
+  interval_ms: 30000
+
+linear_states:
+  todo: "Ready"
+  active: "Implementing"
+  verifying: "Verifying"
+  review: "In Review"
+  gate_approved: "Merging"
+  rework: "Rework"
+  terminal: [Done, Canceled, Duplicate]
+
+workspace:
+  root: ~/.autosymph/workspaces
+
+hooks:
+  before_run: |
+    git fetch origin main
+    git rebase origin/main 2>/dev/null || (test -d .git/rebase-merge && git rebase --abort || true)
+  timeout_ms: 180000
+
+prompts:
+  # This path works while running from the repository's examples directory.
+  # If you copy this config elsewhere, point it at your autosymph checkout's prompts/ directory.
+  root: ../../../prompts
+  global_prompt: global.md
+
+runners:
+  default: claude
+  available:
+    claude:
+      type: claude
+    codex:
+      type: codex
+  auto_match: []
+
+states:
+  implement:
+    type: agent
+    prompt: implement.md
+    linear_state: active
+    max_turns: 100
+    session: inherit
+    transitions:
+      complete: verify
+      complete_low_risk: verify
+
+  verify:
+    type: agent
+    prompt: verify.md
+    linear_state: verifying
+    max_turns: 50
+    session: new
+    transitions:
+      complete: review
+      complete_low_risk: finalize
+      fail: implement
+
+  review:
+    type: gate
+    linear_state: review
+    rework_to: rework
+    max_rework: 3
+    rework_exhausted: todo
+    transitions:
+      approve: finalize
+
+  rework:
+    type: agent
+    prompt: implement.md
+    linear_state: rework
+    max_turns: 100
+    session: inherit
+    transitions:
+      complete: verify
+
+  finalize:
+    type: agent
+    prompt: merge.md
+    linear_state: gate_approved
+    max_turns: 100
+    session: inherit
+    transitions:
+      complete: done
+
+  done:
+    type: terminal
+    linear_state: terminal
+
