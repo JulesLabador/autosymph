@@ -1,4 +1,4 @@
-"""Startup validators for autosymph configuration (IMP-356).
+"""Startup validators for autosymph configuration.
 
 `check_linear_states` enforces the explicit-config rules required by the
 Autoplan Linear-state feature:
@@ -8,7 +8,7 @@ Autoplan Linear-state feature:
   (b) When autoplan is enabled, the `needs-review` issue label must exist in
       the workspace (used by the both-reviewers-fail fallback path).
   (c) When autoplan is enabled, `agent.max_concurrent_agents_by_state.autoplan`
-      must be set (R9 explicit-config rule from PRD round 2).
+      must be set.
 
 Wired into autosymph startup in cli.py after config load and before the
 supervisor loop starts. Raises `ConfigError` to fail loudly with a clear
@@ -62,7 +62,7 @@ async def check_linear_states(
         raise ConfigError(
             "linear_states.autoplan is set but "
             "agent.max_concurrent_agents_by_state.autoplan is unset. "
-            "Per IMP-356 R9, this key must be explicit (recommended: 1). "
+            "This key must be explicit (recommended: 1). "
             "Add to your project YAML under agent.max_concurrent_agents_by_state."
         )
 
@@ -83,7 +83,7 @@ async def check_linear_states(
     if "needs-review" not in labels:
         raise ConfigError(
             "Required 'needs-review' issue label is missing from the Linear "
-            "workspace. Per IMP-356 R12, this label is applied by the autoplan "
-            "skill when both Codex and Claude review fall back. Create it in "
-            "Linear (color recommended: red) and re-run autosymph."
+            "workspace. This label is applied by the autoplan skill when both "
+            "Codex and Claude review fall back. Create it in Linear (color "
+            "recommended: red) and re-run autosymph."
         )

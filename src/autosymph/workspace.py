@@ -35,7 +35,7 @@ class WorkspaceManager:
 
     Branch naming:
         feat/{issue-slug}        — new branch from main
-        feat/{issue-slug}-*      — reused variant (e.g. feat/imp-251-hydrate-ids)
+        feat/{issue-slug}-*      — reused variant (e.g. feat/issue-123-hydrate-ids)
     """
 
     def __init__(

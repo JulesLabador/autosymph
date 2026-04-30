@@ -53,18 +53,18 @@ class TestRenderMultiStatus:
             tracked_issues={"ISSUE-100": {"state": "implement", "claim": "running"}},
         )
         orch_b = _make_mock_orch(
-            project_slug="stokowski",
-            config_path="/configs/stokowski.yaml",
-            repo_path="/repos/stokowski",
+            project_slug="example",
+            config_path="/configs/example.yaml",
+            repo_path="/repos/example",
             runners_active=0,
         )
         output = render_multi_status([orch_a, orch_b])
         assert "demo" in output
-        assert "stokowski" in output
+        assert "example" in output
         assert "2 projects" in output
         assert "ISSUE-100" in output
         assert "demo.yaml" in output
-        assert "stokowski.yaml" in output
+        assert "example.yaml" in output
 
     def test_idle_project_collapsed(self):
         """An idle project (0 runners, 0 tracked) renders as a single line."""

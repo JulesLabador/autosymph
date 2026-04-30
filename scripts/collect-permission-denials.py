@@ -51,7 +51,7 @@ def extract_denials() -> list[dict]:
     denials = []
 
     for ndjson_path in sorted(LOG_ROOT.rglob("*.ndjson")):
-        issue_dir = ndjson_path.parent.name  # e.g. "imp-323"
+        issue_dir = ndjson_path.parent.name  # e.g. "issue-123"
         run_name = ndjson_path.stem  # e.g. "verify-run5"
 
         with open(ndjson_path) as f:

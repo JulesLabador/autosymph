@@ -385,7 +385,7 @@ class Orchestrator:
         status = issue.status
 
         # Direct status mappings
-        # Autoplan (IMP-356) — checked before todo so explicit `Autoplan` state takes priority.
+        # Autoplan — checked before todo so explicit `Autoplan` state takes priority.
         if ls.autoplan and status == ls.autoplan:
             return "autoplan"
         if status == ls.todo:
@@ -499,7 +499,7 @@ class Orchestrator:
             "model": state_cfg.model or self.config.claude.model,
             "permission_mode": state_cfg.permission_mode or self.config.claude.permission_mode,
             "max_turns": state_cfg.max_turns or self.config.claude.max_turns,
-            # IMP-356 R11 — metadata only used by the runner's session-start log.
+            # Metadata only used by the runner's session-start log.
             "identifier": issue.identifier,
             "workflow_state": workflow_state,
             "prompt_path": state_cfg.prompt or "-",
@@ -515,7 +515,7 @@ class Orchestrator:
         if state_cfg.session == "inherit":
             session_id = self._session_ids.get((issue.id, runner_name))
 
-        # Issue slug for worktree branch naming (e.g. "imp-300")
+        # Issue slug for worktree branch naming (e.g. "issue-123")
         issue_slug = issue.identifier.lower()
 
         # Acquire resources (sims, ports) before dispatch
@@ -551,7 +551,7 @@ class Orchestrator:
 
     @staticmethod
     def _session_name(state: str, identifier: str, run: int) -> str:
-        """Session naming: {issue}-{state}-run{N} (e.g. IMP-312-implement-run1)."""
+        """Session naming: {issue}-{state}-run{N} (e.g. ISSUE-123-implement-run1)."""
         return f"{identifier}-{state}-run{run}"
 
     async def _run_agent(
@@ -648,7 +648,7 @@ class Orchestrator:
                     # Per-turn `usage` is for THAT message only (not conversation-cumulative),
                     # so accumulate. Sum input + output + cache to reflect real spend — for
                     # tool-call turns `output_tokens` alone is often 1-3, which made the TUI
-                    # display useless (IMP-359 follow-up; PR #66 used `=` based on a wrong
+                    # display useless (an earlier version assigned `=` based on a wrong
                     # "cumulative per turn" assumption).
                     usage = event.data.get("usage", {})
                     if not usage:
@@ -677,7 +677,7 @@ class Orchestrator:
                 runner_config["env_vars"] = resources.as_env()
                 logger.info("[%s] resources: %s", session_name, resources.items)
 
-            # IMP-356 R11: model-selection audit log lives in the runner
+            # The model-selection audit log lives in the runner
             # (runners/claude.py) so it captures the actual argv passed to claude,
             # not just the runner_config dict here. See ClaudeRunner.run.
             logger.info("[%s] spawning agent runner=%s", session_name, runner_name)
@@ -959,7 +959,7 @@ class Orchestrator:
             if tracked.workflow_state == "verify_review":
                 # Pass dispatch time so the parser ignores stale verdicts from prior runs.
                 # Without this, a reject_structify from run 1 would re-fire on every later
-                # run that fails to post a fresh verdict (the IMP-385 bug).
+                # run that fails to post a fresh verdict.
                 dispatched_at = agent.dispatched_at_iso if agent else None
                 signal_to_use = await self._extract_verify_review_verdict(
                     issue_id, tracked.identifier, signal_to_use,
@@ -984,7 +984,6 @@ class Orchestrator:
                 # Route to verify, not back to verify_review — re-running the
                 # same reviewer on the same evidence would just re-reject.
                 # A fresh verify run produces fresh evidence for review.
-                # (IMP-385 root cause — see postmortem.)
                 target = "verify"
                 logger.info(
                     "%s investigator confirmed verify_review false rejection — "
@@ -1165,8 +1164,8 @@ class Orchestrator:
         are ignored — this prevents a stale verdict from a prior run (e.g.
         reject_structify from run 1) from being re-matched on a later run that
         failed to post its own verdict block. Without this filter, the parser
-        walks back through history and re-fires the old verdict on every run
-        (the IMP-385 / IMP-383 cycle bug).
+        walks back through history and re-fires the old verdict on every run,
+        creating an infinite cycle.
         """
         import re
 
@@ -1269,7 +1268,7 @@ class Orchestrator:
         ls = self.config.linear_states
         mapping = {
             "todo": ls.todo,
-            "autoplan": ls.autoplan,  # IMP-356 — None when autoplan is not configured
+            "autoplan": ls.autoplan,  # None when autoplan is not configured
             "active": ls.active,
             "verifying": ls.verifying,
             "investigating": ls.investigating,

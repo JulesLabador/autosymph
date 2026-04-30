@@ -37,9 +37,9 @@ investigating escalates (or fails) → issue moves to "Blocked" in Linear
 
 The `approve` transition statically targets `verify` in workflow.yaml, but the orchestrator overrides this dynamically. It routes back to `_last_failed_state` — the state that originally failed before investigating. If implement failed → investigating → blocked → approve, the issue goes back to implement, not verify.
 
-### Tied to notifications (IMP-321)
+### Tied to notifications
 
-Blocked is only useful if you know about it. IMP-321 will add notification channels (macOS notifications, Linear @-mentions, Slack) that fire when an issue transitions to blocked. Without notifications, blocked is just a quieter version of being dropped.
+Blocked is only useful if you know about it. A future change will add notification channels (macOS notifications, Linear @-mentions, Slack) that fire when an issue transitions to blocked. Without notifications, blocked is just a quieter version of being dropped.
 
 ## Config
 
@@ -55,4 +55,4 @@ blocked:
 
 - **investigating** — dispatches to blocked when escalating or failing
 - **all agent states** — indirectly, any state can reach blocked via investigating
-- **IMP-321** — notification channels will fire on transition to blocked
+- **notifications (planned)** — notification channels will fire on transition to blocked

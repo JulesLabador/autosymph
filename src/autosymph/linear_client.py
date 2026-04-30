@@ -364,7 +364,7 @@ class LinearClient:
         return comments
 
     async def resolve_team_for_project(self) -> str:
-        """Resolve the team_id associated with this project (IMP-356).
+        """Resolve the team_id associated with this project.
 
         Used by autosymph.diagnostics.check_linear_states for startup validation.
         Linear projects can span multiple teams; we return the first team listed
@@ -393,7 +393,7 @@ class LinearClient:
         return team_id
 
     async def fetch_workspace_states(self, team_id: str) -> list[str]:
-        """List workflow state names available on a Linear team (IMP-356).
+        """List workflow state names available on a Linear team.
 
         Used by startup validation to verify configured states exist.
         """
@@ -409,7 +409,7 @@ class LinearClient:
         return [n["name"] for n in nodes]
 
     async def fetch_workspace_labels(self) -> list[str]:
-        """List issue label names available in the workspace (IMP-356).
+        """List issue label names available in the workspace.
 
         Workspace-scoped — Linear labels can be team-bound or workspace-wide;
         we list both.

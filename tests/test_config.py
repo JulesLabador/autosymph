@@ -312,19 +312,19 @@ class TestLayeredConfig:
     def test_merge_applies_device_repo(self):
         """Device override sets workspace.repo."""
         project_cfg = WorkflowConfig(
-            tracker=TrackerConfig(project="Implicit", api_key="k"),
+            tracker=TrackerConfig(project="Demo", api_key="k"),
             states={"done": StateConfig(type="terminal")},
         )
         device = DeviceConfig(
             machine_name="my-laptop",
-            projects={"demo": DeviceProjectOverride(repo="~/Documents/demo-app")},
+            projects={"demo": DeviceProjectOverride(repo="~/code/demo-app")},
         )
         override = device.projects["demo"]
         merged = merge_device_project(device, project_cfg, override)
 
-        assert merged.workspace.repo == "~/Documents/demo-app"
+        assert merged.workspace.repo == "~/code/demo-app"
         assert merged.machine_name == "my-laptop"
-        assert merged.tracker.project == "Implicit"
+        assert merged.tracker.project == "Demo"
 
     def test_merge_applies_device_resources(self):
         """Device resources override project defaults."""

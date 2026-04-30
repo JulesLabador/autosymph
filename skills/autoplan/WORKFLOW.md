@@ -1,6 +1,6 @@
 # Autonomous Engineering Pipeline
 
-End-to-end workflow from raw thought to merged code. Designed for an autosymph-style orchestrator (Stokowski, custom Agent SDK daemon, or `claude -p` loop) polling Linear.
+End-to-end workflow from raw thought to merged code. Designed for an autosymph-style orchestrator (autosymph itself, a custom Agent SDK daemon, or a `claude -p` loop) polling Linear.
 
 ## Linear Statuses
 
@@ -28,7 +28,7 @@ End-to-end workflow from raw thought to merged code. Designed for an autosymph-s
 
 ### Sources
 Raw thoughts arrive in Triage from:
-- Voice memos (Implicit briefing / Siri)
+- Voice memos (e.g. dictation apps, Siri Shortcuts)
 - Slack messages
 - Email threads
 - User feedback
@@ -85,7 +85,7 @@ Triggered by: human moves issue to Todo (or triage agent does it automatically).
 
 Triggered by: autosymph polls for issues in `Ready` state.
 
-**Who runs it:** autosymph dispatches an agent (Codex or Claude via ralph/`claude -p`).
+**Who runs it:** autosymph dispatches an agent (Codex or Claude via `claude -p`).
 
 **What happens:**
 1. Agent creates isolated workspace (git worktree)

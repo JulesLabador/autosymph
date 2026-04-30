@@ -285,7 +285,7 @@ def start(daemon: bool, config_path: str | None, verbose: bool, max_agents: int 
             click.echo("  export LINEAR_API_KEY=lin_api_...", err=True)
             click.echo("Orchestrator will start but skip polling until the key is available.\n", err=True)
 
-        # IMP-356: validate Linear workspace state if autoplan is configured.
+        # Validate Linear workspace state if autoplan is configured.
         # Skipped when Linear isn't configured (dev/test) — startup still proceeds.
         if cfg.linear_states.autoplan and linear.is_configured:
             from autosymph.diagnostics import check_linear_states, ConfigError as DiagError
@@ -639,11 +639,11 @@ def logs(issue_id: str, config_path: str | None, project: str | None) -> None:
 @click.argument("issue_id")
 def tail(issue_id: str) -> None:
     """Live-tail a running agent."""
-    click.echo(f"Tailing {issue_id} — not yet implemented (IMP-304).")
+    click.echo(f"Tailing {issue_id} — not yet implemented.")
 
 
 @main.command()
 @click.argument("issue_id")
 def dispatch(issue_id: str) -> None:
     """Manually dispatch an issue to an agent."""
-    click.echo(f"Dispatching {issue_id} — not yet implemented (IMP-302).")
+    click.echo(f"Dispatching {issue_id} — not yet implemented.")
