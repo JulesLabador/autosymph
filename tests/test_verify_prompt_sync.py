@@ -9,9 +9,9 @@ import yaml
 def _active_project_configs() -> list[Path]:
     config_root = Path(__file__).resolve().parents[2] / "autosymph-config" / "projects"
     project_configs = [
-        config_root / "implicit.yaml",
-        config_root / "implicit-swift.yaml",
-        config_root / "aion.yaml",
+        config_root / "ios-app.yaml",
+        config_root / "web-app.yaml",
+        config_root / "api-service.yaml",
     ]
     existing = [path for path in project_configs if path.exists()]
     if not existing:

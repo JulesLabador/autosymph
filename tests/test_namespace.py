@@ -13,12 +13,12 @@ class TestWorkspaceNamespace:
         from autosymph.workspace import WorkspaceManager
 
         config = WorkspaceConfig(root=str(tmp_path / "workspaces"), repo="/tmp/fake-repo")
-        mgr = WorkspaceManager(config=config, hooks=HooksConfig(), project_slug="implicit")
+        mgr = WorkspaceManager(config=config, hooks=HooksConfig(), project_slug="demo")
         # Verify the root and project_slug are stored
-        assert mgr.project_slug == "implicit"
+        assert mgr.project_slug == "demo"
         # The actual path construction happens in create(), which needs a git repo.
         # Just verify the path would be correct:
-        expected = tmp_path / "workspaces" / "implicit" / "imp-100"
+        expected = tmp_path / "workspaces" / "demo" / "imp-100"
         if mgr.project_slug:
             path = mgr.root / mgr.project_slug / "imp-100"
         else:
@@ -42,9 +42,9 @@ class TestLogStreamNamespace:
         """With project_slug, logs go into {root}/{project}/{issue}/."""
         from autosymph.logging.stream import LogStream
 
-        stream = LogStream(log_root=tmp_path / "logs", project_slug="implicit")
+        stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
         log_dir = stream._issue_dir("imp-100")
-        assert log_dir == tmp_path / "logs" / "implicit" / "imp-100"
+        assert log_dir == tmp_path / "logs" / "demo" / "imp-100"
 
     def test_flat_log_dir(self, tmp_path):
         """Without project_slug, logs go into {root}/{issue}/ (backward compat)."""
@@ -58,18 +58,18 @@ class TestLogStreamNamespace:
         """open() creates the namespaced directory structure."""
         from autosymph.logging.stream import LogStream
 
-        stream = LogStream(log_root=tmp_path / "logs", project_slug="implicit")
+        stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
         path = stream.open("imp-100", "implement", 1)
         assert path.parent.exists()
-        assert path == tmp_path / "logs" / "implicit" / "imp-100" / "implement-run1.ndjson"
+        assert path == tmp_path / "logs" / "demo" / "imp-100" / "implement-run1.ndjson"
 
     def test_count_runs_namespaced(self, tmp_path):
         """count_runs() respects project_slug namespace."""
         from autosymph.logging.stream import LogStream
 
-        stream = LogStream(log_root=tmp_path / "logs", project_slug="implicit")
+        stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
         # Create some fake run files
-        log_dir = tmp_path / "logs" / "implicit" / "imp-100"
+        log_dir = tmp_path / "logs" / "demo" / "imp-100"
         log_dir.mkdir(parents=True)
         (log_dir / "implement-run1.ndjson").touch()
         (log_dir / "implement-run2.ndjson").touch()

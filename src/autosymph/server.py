@@ -12,7 +12,9 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 from http import HTTPStatus
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -34,6 +36,9 @@ class StatusServer:
         self._host = host
         self._port = port
         self._server: asyncio.Server | None = None
+        self._discovery_path = Path(
+            os.environ.get("AUTOSYMPH_STATUS_FILE", "~/.autosymph/status-api.json")
+        ).expanduser()
 
     async def start(self) -> bool:
         """Start the HTTP server. Returns True on success, False on failure."""
@@ -41,6 +46,11 @@ class StatusServer:
             self._server = await asyncio.start_server(
                 self._handle_connection, self._host, self._port
             )
+            if self._server.sockets:
+                sockname = self._server.sockets[0].getsockname()
+                if isinstance(sockname, tuple) and len(sockname) >= 2:
+                    self._port = int(sockname[1])
+            self._write_discovery_file()
             logger.info("Status API listening on http://%s:%d/status", self._host, self._port)
             return True
         except OSError as exc:
@@ -57,7 +67,36 @@ class StatusServer:
         if self._server:
             self._server.close()
             await self._server.wait_closed()
+            self._remove_discovery_file()
             logger.info("Status API stopped")
+
+    def _write_discovery_file(self) -> None:
+        """Publish the active status API endpoint for monitor tools."""
+        url = f"http://{self._host}:{self._port}"
+        payload = {
+            "host": self._host,
+            "port": self._port,
+            "base_url": url,
+            "url": f"{url}/status",
+            "pid": os.getpid(),
+        }
+        try:
+            self._discovery_path.parent.mkdir(parents=True, exist_ok=True)
+            self._discovery_path.write_text(json.dumps(payload, indent=2) + "\n")
+        except OSError as exc:
+            logger.debug("Could not write status API discovery file: %s", exc)
+
+    def _remove_discovery_file(self) -> None:
+        """Remove the discovery file if it still points at this process."""
+        try:
+            data = json.loads(self._discovery_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            return
+        if data.get("pid") == os.getpid() and data.get("port") == self._port:
+            try:
+                self._discovery_path.unlink()
+            except OSError:
+                pass
 
     def _build_status(self) -> dict[str, Any]:
         """Aggregate status from all orchestrators."""

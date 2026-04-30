@@ -117,17 +117,17 @@ class TestRunnerConfig:
 class TestProjectSlug:
     def test_simple_name(self):
         cfg = WorkflowConfig(
-            tracker=TrackerConfig(project="implicit", api_key="k"),
+            tracker=TrackerConfig(project="demo", api_key="k"),
             states={"done": StateConfig(type="terminal")},
         )
-        assert cfg.project_slug == "implicit"
+        assert cfg.project_slug == "demo"
 
     def test_capitalized_name(self):
         cfg = WorkflowConfig(
-            tracker=TrackerConfig(project="Implicit", api_key="k"),
+            tracker=TrackerConfig(project="Demo", api_key="k"),
             states={"done": StateConfig(type="terminal")},
         )
-        assert cfg.project_slug == "implicit"
+        assert cfg.project_slug == "demo"
 
     def test_spaces_and_special_chars(self):
         cfg = WorkflowConfig(
@@ -242,18 +242,18 @@ class TestLocalEnv:
         (config_dir / "local.env").write_text(
             "\n".join([
                 "# local secrets",
-                "IMPLICIT_E2E_SECRET=file-secret",
+                "PROJECT_E2E_SECRET=file-secret",
                 "export LINEAR_API_KEY='file-linear'",
                 "IGNORED_LINE",
             ])
         )
         monkeypatch.setenv("LINEAR_API_KEY", "shell-linear")
-        monkeypatch.delenv("IMPLICIT_E2E_SECRET", raising=False)
+        monkeypatch.delenv("PROJECT_E2E_SECRET", raising=False)
 
         loaded = _load_local_env(config_dir)
 
         assert loaded == config_dir / "local.env"
-        assert os.environ["IMPLICIT_E2E_SECRET"] == "file-secret"
+        assert os.environ["PROJECT_E2E_SECRET"] == "file-secret"
         assert os.environ["LINEAR_API_KEY"] == "shell-linear"
 
     def test_local_env_can_set_config_dir_before_discovery(self, tmp_path, monkeypatch):
@@ -317,12 +317,12 @@ class TestLayeredConfig:
         )
         device = DeviceConfig(
             machine_name="my-laptop",
-            projects={"implicit": DeviceProjectOverride(repo="~/Documents/implicit")},
+            projects={"demo": DeviceProjectOverride(repo="~/Documents/demo-app")},
         )
-        override = device.projects["implicit"]
+        override = device.projects["demo"]
         merged = merge_device_project(device, project_cfg, override)
 
-        assert merged.workspace.repo == "~/Documents/implicit"
+        assert merged.workspace.repo == "~/Documents/demo-app"
         assert merged.machine_name == "my-laptop"
         assert merged.tracker.project == "Implicit"
 

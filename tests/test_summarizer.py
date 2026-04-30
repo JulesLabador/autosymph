@@ -195,12 +195,12 @@ def test_mcp_skips_noisy_signed_urls() -> None:
         _tool_result(
             "t1",
             "https://uploads.linear.app/abc/def/signature=eyJ.JWT.payload\n"
-            "Linked issue: https://linear.app/simplicit/issue/IMP-372",
+            "Linked issue: https://linear.app/example/issue/ISSUE-123",
         )
     )
     out = s.format_summary()
     assert "uploads.linear.app" not in out
-    assert "https://linear.app/simplicit/issue/IMP-372" in out
+    assert "https://linear.app/example/issue/ISSUE-123" in out
 
 
 def test_url_trailing_punctuation_stripped() -> None:
@@ -328,7 +328,7 @@ def test_format_digest_promotes_audit_failure_notes() -> None:
                     {
                         "command": (
                             "$HOME/.autosymph/skills/verify-completion-audit/scripts/audit.sh "
-                            "~/.autosymph/logs/implicit-swift/imp-385/verify-run2.ndjson"
+                            "~/.autosymph/logs/ios-app/issue-123/verify-run2.ndjson"
                         )
                     },
                     "t1",

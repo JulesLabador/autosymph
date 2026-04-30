@@ -293,7 +293,7 @@ Quick map of what goes where. When something feels off, this is the table to con
 |---|---|---|
 | `autosymph-config/devices/{hostname}.yaml` | This machine's environment: simulators, dev ports, repo paths, agent concurrency, default Claude model. Lists which projects to run on this host. | New device, new simulator, repo moved on disk, want to throttle agent concurrency on this host. |
 | `autosymph-config/projects/{slug}.yaml` | One project's workflow: tracker (Linear project name), state machine (`implement`/`verify`/`review`/…), prompts, transitions, per-state model and tool permissions. | Adding a state, changing a per-state model, retargeting a Linear status name, tightening `allowed_tools`. |
-| `autosymph-config/local.env` *(gitignored)* | Per-device secrets and startup defaults. Loaded by `autosymph start` before config discovery. Shell vars win when both are set. | Storing `IMPLICIT_E2E_SECRET` or pinning `AUTOSYMPH_CONFIG_DIR` so launches don't have to repeat them. |
+| `autosymph-config/local.env` *(gitignored)* | Per-device secrets and startup defaults. Loaded by `autosymph start` before config discovery. Shell vars win when both are set. | Storing project-specific secrets or pinning `AUTOSYMPH_CONFIG_DIR` so launches don't have to repeat them. |
 | `autosymph-config/local.env.example` | Template showing the expected keys. | Adding a new local-env key the team should know about. |
 | `autosymph-config/verify-templates/*.md` | Copy-paste-ready prompt fragments (`auth.md`, `fixtures.md`) the verify agent reuses. | Verify needs new shared boilerplate. |
 | `autosymph/prompts/*.md` | The actual agent prompts: `implement.md`, `verify.md`, `verify-review.md`, `merge.md`, `global.md`, `autoplan.md`, `investigating.md`, `scheduled-models-refresh.md`. | Changing what an agent *does* — the YAML routes to a prompt; the prompt is the behavior. |
@@ -344,7 +344,7 @@ uv run autosymph start -v                 # verbose logging (no TUI)
 uv run autosymph start --daemon           # background, logs only
 uv run autosymph config check             # validate config
 uv run autosymph logs IMP-123             # show logs for issue
-uv run autosymph logs --project implicit IMP-123  # namespaced logs
+uv run autosymph logs --project my-project ISSUE-123  # namespaced logs
 uv run autosymph models check             # fail if any config references a stale model
 uv run autosymph models refresh           # dry-run: bump registry from /v1/models
 uv run autosymph models refresh --apply   # rewrite src/autosymph/models.py

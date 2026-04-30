@@ -42,9 +42,9 @@ class TestRenderMultiStatus:
     def test_grouped_sections(self):
         """Two projects render as distinct grouped sections."""
         orch_a = _make_mock_orch(
-            project_slug="implicit",
-            config_path="/configs/implicit.yaml",
-            repo_path="/repos/implicit-swift",
+            project_slug="demo",
+            config_path="/configs/demo.yaml",
+            repo_path="/repos/demo-app",
             runners_active=1,
             runners={"IMP-100": {
                 "state": "implement", "duration_s": 120, "turns": 5,
@@ -59,11 +59,11 @@ class TestRenderMultiStatus:
             runners_active=0,
         )
         output = render_multi_status([orch_a, orch_b])
-        assert "implicit" in output
+        assert "demo" in output
         assert "stokowski" in output
         assert "2 projects" in output
         assert "IMP-100" in output
-        assert "implicit.yaml" in output
+        assert "demo.yaml" in output
         assert "stokowski.yaml" in output
 
     def test_idle_project_collapsed(self):

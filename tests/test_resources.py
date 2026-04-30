@@ -16,9 +16,9 @@ class TestNamespacedKeys:
         pool = ResourcePool(config)
         res = await pool.acquire_for_issue(
             "imp-100", "implement",
-            project_slug="implicit",
+            project_slug="demo",
         )
-        assert res.holder_id == "implicit:imp-100"
+        assert res.holder_id == "demo:imp-100"
 
     @pytest.mark.asyncio
     async def test_acquire_without_project_slug(self):
@@ -36,10 +36,10 @@ class TestNamespacedKeys:
         # Acquire with namespace
         await pool.acquire_for_issue(
             "imp-100", "implement",
-            project_slug="implicit",
+            project_slug="demo",
         )
         # Release with matching namespace
-        pool.release_all("imp-100", project_slug="implicit")
+        pool.release_all("imp-100", project_slug="demo")
         # Pool should have the port back
         assert pool._pools["dev_port"].qsize() == 1
 

@@ -79,7 +79,7 @@ skills/
   record-demo-video/
   screenshot-to-linear/
   structify/
-  symphony/
+  autosymph-monitor/
   verify-completion-audit/
   verify-finalize/
   verify-preflight/
@@ -94,7 +94,7 @@ Source today:
 Verification:
 
 ```bash
-skills/symphony/test.sh
+skills/autosymph-monitor/test.sh
 skills/verify-preflight/test.sh
 skills/verify-finalize/test.sh
 skills/verify-completion-audit/test.sh
@@ -131,8 +131,8 @@ Rewrite examples to remove:
 
 - `/Users/example/...`
 - user-local absolute paths
-- `implicit`, `implicit-swift`, `aion`, and other personal project names
-- personal secret names such as `IMPLICIT_E2E_SECRET`
+- personal project names
+- personal secret names
 
 Verification:
 
@@ -179,7 +179,7 @@ and lets installer scripts mirror the skills into each agent's discovery path.
 Verification:
 
 ```bash
-rg "/Users/|implicit|aion" README.md AGENTS.md prompts tests src examples
+rg "/Users/|personal-project-name" README.md AGENTS.md prompts tests src examples
 uv run pytest
 ```
 
@@ -260,7 +260,7 @@ README should explain:
 - How to create config from `examples/config`
 - How to install or point to skills
 - How to run autosymph
-- How to run `/symphony`
+- How to run the autosymph monitor
 - Where project-specific `.autosymph/verify/*.md` files belong
 
 Verification:
