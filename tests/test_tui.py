@@ -46,11 +46,11 @@ class TestRenderMultiStatus:
             config_path="/configs/demo.yaml",
             repo_path="/repos/demo-app",
             runners_active=1,
-            runners={"IMP-100": {
+            runners={"ISSUE-100": {
                 "state": "implement", "duration_s": 120, "turns": 5,
                 "tokens": 1000, "last_tool": "edit",
             }},
-            tracked_issues={"IMP-100": {"state": "implement", "claim": "running"}},
+            tracked_issues={"ISSUE-100": {"state": "implement", "claim": "running"}},
         )
         orch_b = _make_mock_orch(
             project_slug="stokowski",
@@ -62,7 +62,7 @@ class TestRenderMultiStatus:
         assert "demo" in output
         assert "stokowski" in output
         assert "2 projects" in output
-        assert "IMP-100" in output
+        assert "ISSUE-100" in output
         assert "demo.yaml" in output
         assert "stokowski.yaml" in output
 
@@ -87,23 +87,23 @@ class TestRenderMultiStatus:
             config_path="/configs/active.yaml",
             runners_active=2,
             runners={
-                "IMP-100": {
+                "ISSUE-100": {
                     "state": "implement", "duration_s": 60,
                     "turns": 3, "tokens": 500, "last_tool": "",
                 },
-                "IMP-101": {
+                "ISSUE-101": {
                     "state": "verify", "duration_s": 30,
                     "turns": 1, "tokens": 200, "last_tool": "",
                 },
             },
             tracked_issues={
-                "IMP-100": {"state": "implement", "claim": "running"},
-                "IMP-101": {"state": "verify", "claim": "running"},
+                "ISSUE-100": {"state": "implement", "claim": "running"},
+                "ISSUE-101": {"state": "verify", "claim": "running"},
             },
         )
         output = render_multi_status([orch])
-        assert "IMP-100" in output
-        assert "IMP-101" in output
+        assert "ISSUE-100" in output
+        assert "ISSUE-101" in output
         assert "2/3 agents" in output
 
     def test_failed_project_section(self):

@@ -298,7 +298,7 @@ class LinearClient:
                 title=node["title"],
                 status=node["state"]["name"],
                 priority=node.get("priority", 0),
-                labels=[l["name"] for l in node.get("labels", {}).get("nodes", [])],
+                labels=[label["name"] for label in node.get("labels", {}).get("nodes", [])],
                 assignee_id=node.get("assignee", {}).get("id") if node.get("assignee") else None,
                 description=node.get("description"),
                 blocked_by=blockers,

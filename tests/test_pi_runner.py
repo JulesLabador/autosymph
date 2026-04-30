@@ -25,7 +25,7 @@ class TestPiCommand:
         monkeypatch.setattr(asyncio, "create_subprocess_exec", _fake_exec)
 
         result = asyncio.run(
-            PiRunner().run("hi", "/tmp", {"identifier": "IMP-1", "workflow_state": "implement"})
+            PiRunner().run("hi", "/tmp", {"identifier": "ISSUE-1", "workflow_state": "implement"})
         )
 
         assert result.success is False

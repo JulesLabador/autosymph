@@ -1,6 +1,5 @@
 """Tests for WorkspaceManager .autosymph/ propagation.
 
-Regression: see autosymph/docs/postmortems/2026-04-25-auth-md-missing-from-worktree.md.
 
 `.autosymph/` is gitignored, so `git worktree add` doesn't carry the directory.
 WorkspaceManager.create() must explicitly copy it (mirroring the
@@ -10,8 +9,6 @@ auth.md / fixtures.md / ios.md and fail with "auth.md missing".
 
 from __future__ import annotations
 
-import asyncio
-import shutil
 import subprocess
 from pathlib import Path
 
@@ -71,34 +68,34 @@ def _make_manager(repo: Path, root: Path) -> WorkspaceManager:
 def test_parse_branch_list_line_strips_worktree_marker():
     """Branches checked out in another worktree are prefixed with '+ '."""
     assert (
-        WorkspaceManager._parse_branch_list_line("+ feat/imp-388")
-        == "feat/imp-388"
+        WorkspaceManager._parse_branch_list_line("+ feat/issue-388")
+        == "feat/issue-388"
     )
     assert (
-        WorkspaceManager._parse_branch_list_line("* feat/imp-388")
-        == "feat/imp-388"
+        WorkspaceManager._parse_branch_list_line("* feat/issue-388")
+        == "feat/issue-388"
     )
     assert (
-        WorkspaceManager._parse_branch_list_line("  feat/imp-388")
-        == "feat/imp-388"
+        WorkspaceManager._parse_branch_list_line("  feat/issue-388")
+        == "feat/issue-388"
     )
     assert WorkspaceManager._parse_branch_list_line("   ") is None
 
 
 @pytest.mark.asyncio
 async def test_autosymph_dir_copied_into_worktree(tmp_repo: Path, tmp_path: Path):
-    """Regression for IMP-374: .autosymph/verify/auth.md must reach the worktree."""
+    """Regression for ISSUE-374: .autosymph/verify/auth.md must reach the worktree."""
     root = tmp_path / "ws-root"
     mgr = _make_manager(tmp_repo, root)
 
-    ws = await mgr.create("imp-test")
+    ws = await mgr.create("issue-test")
 
     auth_md = ws.path / ".autosymph" / "verify" / "auth.md"
     ios_md = ws.path / ".autosymph" / "verify" / "ios.md"
 
     assert auth_md.exists(), (
         f"auth.md not found in worktree at {auth_md}. "
-        "If this fails, the IMP-374 'auth.md missing' bug is back: gitignored "
+        "If this fails, the ISSUE-374 'auth.md missing' bug is back: gitignored "
         ".autosymph/ never made it across the worktree boundary."
     )
     assert ios_md.exists(), "ios.md should also be propagated"
@@ -116,7 +113,7 @@ async def test_settings_local_still_copied(tmp_repo: Path, tmp_path: Path):
     root = tmp_path / "ws-root"
     mgr = _make_manager(tmp_repo, root)
 
-    ws = await mgr.create("imp-test2")
+    ws = await mgr.create("issue-test2")
 
     settings = ws.path / ".claude" / "settings.local.json"
     assert settings.exists(), "settings.local.json copy regression"
@@ -137,7 +134,7 @@ async def test_autosymph_absent_does_not_error(tmp_path: Path):
     root = tmp_path / "ws-root"
     mgr = _make_manager(repo, root)
 
-    ws = await mgr.create("imp-bare")
+    ws = await mgr.create("issue-bare")
 
     # Worktree exists, no .autosymph/ leaked into it
     assert ws.path.exists()
@@ -154,7 +151,7 @@ async def test_recreate_replaces_stale_autosymph(tmp_repo: Path, tmp_path: Path)
     mgr = _make_manager(tmp_repo, root)
 
     # First create
-    ws1 = await mgr.create("imp-restale")
+    ws1 = await mgr.create("issue-restale")
     auth1 = (ws1.path / ".autosymph" / "verify" / "auth.md").read_text()
     assert "e2e-login" in auth1
 
@@ -164,7 +161,7 @@ async def test_recreate_replaces_stale_autosymph(tmp_repo: Path, tmp_path: Path)
     )
 
     # Second create — should pick up new content
-    ws2 = await mgr.create("imp-restale")
+    ws2 = await mgr.create("issue-restale")
     auth2 = (ws2.path / ".autosymph" / "verify" / "auth.md").read_text()
     assert "v2" in auth2, "stale auth.md was not refreshed on recreate"
 

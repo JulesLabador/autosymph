@@ -1,4 +1,4 @@
-"""Tests for state_machine.actionable_linear_statuses (IMP-356).
+"""Tests for state_machine.actionable_linear_statuses (ISSUE-356).
 
 These cover the autoplan addition to the polling list. The Autoplan state
 is opt-in: only included when `linear_states.autoplan` is configured.

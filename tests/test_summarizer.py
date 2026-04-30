@@ -1,4 +1,4 @@
-"""Tests for ActivitySummarizer (IMP-313)."""
+"""Tests for ActivitySummarizer (ISSUE-313)."""
 
 from __future__ import annotations
 
@@ -124,13 +124,13 @@ def test_generic_url_fallback() -> None:
     s = ActivitySummarizer()
     s.ingest(
         _assistant_turn(
-            [_tool_use("mcp__linear__save_issue", {"id": "IMP-1"}, "t1")]
+            [_tool_use("mcp__linear__save_issue", {"id": "ISSUE-1"}, "t1")]
         )
     )
-    s.ingest(_tool_result("t1", [{"type": "text", "text": "saved at https://linear.app/x/IMP-1"}]))
+    s.ingest(_tool_result("t1", [{"type": "text", "text": "saved at https://linear.app/x/ISSUE-1"}]))
     out = s.format_summary()
     assert "Used linear.save_issue" in out
-    assert "https://linear.app/x/IMP-1" in out
+    assert "https://linear.app/x/ISSUE-1" in out
 
 
 def test_bash_non_pr_no_url_extraction() -> None:
@@ -159,7 +159,7 @@ def test_mcp_list_methods_skip_url_extraction() -> None:
             [_tool_use("mcp__linear__list_comments", {}, "t1")]
         )
     )
-    s.ingest(_tool_result("t1", "Linked issue: https://linear.app/x/IMP-1"))
+    s.ingest(_tool_result("t1", "Linked issue: https://linear.app/x/ISSUE-1"))
     out = s.format_summary()
     assert "https://linear.app" not in out
 
@@ -175,11 +175,11 @@ def test_url_regex_breaks_on_backslash_escape() -> None:
     s.ingest(
         _tool_result(
             "t1",
-            "Issue at https://linear.app/x/IMP-1\\n\\n### header that follows",
+            "Issue at https://linear.app/x/ISSUE-1\\n\\n### header that follows",
         )
     )
     out = s.format_summary()
-    assert "IMP-1)" in out
+    assert "ISSUE-1)" in out
     assert "\\n" not in out
 
 
@@ -188,7 +188,7 @@ def test_mcp_skips_noisy_signed_urls() -> None:
     s = ActivitySummarizer()
     s.ingest(
         _assistant_turn(
-            [_tool_use("mcp__linear__get_issue", {"id": "IMP-372"}, "t1")]
+            [_tool_use("mcp__linear__get_issue", {"id": "ISSUE-372"}, "t1")]
         )
     )
     s.ingest(
@@ -211,10 +211,10 @@ def test_url_trailing_punctuation_stripped() -> None:
             [_tool_use("mcp__linear__save_issue", {"id": "X"}, "t1")]
         )
     )
-    s.ingest(_tool_result("t1", "Saved at https://linear.app/x/IMP-1."))
+    s.ingest(_tool_result("t1", "Saved at https://linear.app/x/ISSUE-1."))
     out = s.format_summary()
-    assert "https://linear.app/x/IMP-1)" in out
-    assert "IMP-1.)" not in out
+    assert "https://linear.app/x/ISSUE-1)" in out
+    assert "ISSUE-1.)" not in out
 
 
 def test_error_bullet() -> None:

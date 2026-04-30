@@ -70,5 +70,5 @@ class EventLog:
             return []
         lines = self._path.read_text().splitlines()
         if issue_id:
-            lines = [l for l in lines if issue_id in l]
+            lines = [line for line in lines if issue_id in line]
         return lines[-limit:]

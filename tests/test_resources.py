@@ -15,18 +15,18 @@ class TestNamespacedKeys:
         config = ResourcesConfig(dev_port_range=[3001, 3002])
         pool = ResourcePool(config)
         res = await pool.acquire_for_issue(
-            "imp-100", "implement",
+            "issue-100", "implement",
             project_slug="demo",
         )
-        assert res.holder_id == "demo:imp-100"
+        assert res.holder_id == "demo:issue-100"
 
     @pytest.mark.asyncio
     async def test_acquire_without_project_slug(self):
         """No project slug — backward compat, bare issue_id."""
         config = ResourcesConfig(dev_port_range=[3001])
         pool = ResourcePool(config)
-        res = await pool.acquire_for_issue("imp-100", "implement")
-        assert res.holder_id == "imp-100"
+        res = await pool.acquire_for_issue("issue-100", "implement")
+        assert res.holder_id == "issue-100"
 
     @pytest.mark.asyncio
     async def test_release_all_namespaced(self):
@@ -35,11 +35,11 @@ class TestNamespacedKeys:
         pool = ResourcePool(config)
         # Acquire with namespace
         await pool.acquire_for_issue(
-            "imp-100", "implement",
+            "issue-100", "implement",
             project_slug="demo",
         )
         # Release with matching namespace
-        pool.release_all("imp-100", project_slug="demo")
+        pool.release_all("issue-100", project_slug="demo")
         # Pool should have the port back
         assert pool._pools["dev_port"].qsize() == 1
 

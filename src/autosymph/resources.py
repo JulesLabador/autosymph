@@ -261,7 +261,7 @@ class ResourcePool:
         holder_id = f"{project_slug}:{issue_id}" if project_slug else issue_id
         resources = AcquiredResources(holder_id=holder_id)
         labels = labels or []
-        label_set = {l.lower() for l in labels}
+        label_set = {label.lower() for label in labels}
 
         has_sim_pool = "ios_simulator" in self._pools
 

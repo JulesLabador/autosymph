@@ -1,6 +1,5 @@
 """Tests for the verify_review verdict parser.
 
-Regression: see autosymph/docs/postmortems/2026-04-25-verify-review-decision-marker-dropped.md.
 
 The verdict parser must recognize:
 - decision="approve"           → Signal.COMPLETE  (or COMPLETE_LOW_RISK if fallback says so)
@@ -77,7 +76,7 @@ Issues found.
 
 @pytest.mark.asyncio
 async def test_reject_structify_returns_structify():
-    """Regression: this was the IMP-374 bug. Decision was silently dropped → FAIL → cycle."""
+    """Regression: this was the ISSUE-374 bug. Decision was silently dropped → FAIL → cycle."""
     body = """## Verify Review — REJECTED (structify)
 
 Infrastructure gaps detected: idb broken, auth.md missing.
@@ -87,7 +86,7 @@ Infrastructure gaps detected: idb broken, auth.md missing.
     sig = await orch._extract_verify_review_verdict("ISS-1", "ISS-1", Signal.COMPLETE)
     assert sig == Signal.STRUCTIFY, (
         f"reject_structify must return Signal.STRUCTIFY (got {sig.value}). "
-        "If this fails, the IMP-374 cycle bug is back: orchestrator will route to FAIL → verify."
+        "If this fails, the ISSUE-374 cycle bug is back: orchestrator will route to FAIL → verify."
     )
 
 
@@ -148,7 +147,7 @@ async def test_picks_first_verdict_block_across_comments():
 
 @pytest.mark.asyncio
 async def test_stale_verdict_from_prior_run_is_ignored():
-    """Regression: IMP-385 / IMP-383 cycle bug.
+    """Regression: ISSUE-385 / ISSUE-383 cycle bug.
 
     A reject_structify verdict from run 1 must NOT be re-matched on run 4 if
     run 4's agent failed to post a fresh verdict block. Without filtering,
@@ -172,7 +171,7 @@ Infrastructure gap from run 1.
     )
     assert sig == Signal.FAIL, (
         f"stale verdict from prior run must be ignored (got {sig.value}). "
-        "If this fails, the IMP-385 cycle bug is back."
+        "If this fails, the ISSUE-385 cycle bug is back."
     )
 
 

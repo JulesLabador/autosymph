@@ -1,7 +1,7 @@
-"""Smoke test for IMP-332 blockedBy filter logic."""
+"""Smoke test for ISSUE-332 blockedBy filter logic."""
 import pytest
 from unittest.mock import AsyncMock, patch
-from autosymph.linear_client import LinearClient, IssueRef, LinearIssue
+from autosymph.linear_client import LinearClient, IssueRef
 
 
 @pytest.mark.asyncio

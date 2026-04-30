@@ -39,7 +39,7 @@ class TestAssigneeFilter:
 
 
 class TestLinearStatesAutoplan:
-    """Tests for the optional `autoplan` field on LinearStatesConfig (IMP-356)."""
+    """Tests for the optional `autoplan` field on LinearStatesConfig (ISSUE-356)."""
 
     def test_autoplan_default_none(self):
         """When omitted, autoplan defaults to None (preserves backward compat)."""

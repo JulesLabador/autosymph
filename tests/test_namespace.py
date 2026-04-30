@@ -18,11 +18,11 @@ class TestWorkspaceNamespace:
         assert mgr.project_slug == "demo"
         # The actual path construction happens in create(), which needs a git repo.
         # Just verify the path would be correct:
-        expected = tmp_path / "workspaces" / "demo" / "imp-100"
+        expected = tmp_path / "workspaces" / "demo" / "issue-100"
         if mgr.project_slug:
-            path = mgr.root / mgr.project_slug / "imp-100"
+            path = mgr.root / mgr.project_slug / "issue-100"
         else:
-            path = mgr.root / "imp-100"
+            path = mgr.root / "issue-100"
         assert path == expected
 
     def test_no_project_slug(self, tmp_path):
@@ -32,8 +32,8 @@ class TestWorkspaceNamespace:
         config = WorkspaceConfig(root=str(tmp_path / "workspaces"), repo="/tmp/fake-repo")
         mgr = WorkspaceManager(config=config, hooks=HooksConfig())
         assert mgr.project_slug is None
-        path = mgr.root / "imp-100"
-        expected = tmp_path / "workspaces" / "imp-100"
+        path = mgr.root / "issue-100"
+        expected = tmp_path / "workspaces" / "issue-100"
         assert path == expected
 
 
@@ -43,25 +43,25 @@ class TestLogStreamNamespace:
         from autosymph.logging.stream import LogStream
 
         stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
-        log_dir = stream._issue_dir("imp-100")
-        assert log_dir == tmp_path / "logs" / "demo" / "imp-100"
+        log_dir = stream._issue_dir("issue-100")
+        assert log_dir == tmp_path / "logs" / "demo" / "issue-100"
 
     def test_flat_log_dir(self, tmp_path):
         """Without project_slug, logs go into {root}/{issue}/ (backward compat)."""
         from autosymph.logging.stream import LogStream
 
         stream = LogStream(log_root=tmp_path / "logs")
-        log_dir = stream._issue_dir("imp-100")
-        assert log_dir == tmp_path / "logs" / "imp-100"
+        log_dir = stream._issue_dir("issue-100")
+        assert log_dir == tmp_path / "logs" / "issue-100"
 
     def test_open_creates_namespaced_dir(self, tmp_path):
         """open() creates the namespaced directory structure."""
         from autosymph.logging.stream import LogStream
 
         stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
-        path = stream.open("imp-100", "implement", 1)
+        path = stream.open("issue-100", "implement", 1)
         assert path.parent.exists()
-        assert path == tmp_path / "logs" / "demo" / "imp-100" / "implement-run1.ndjson"
+        assert path == tmp_path / "logs" / "demo" / "issue-100" / "implement-run1.ndjson"
 
     def test_count_runs_namespaced(self, tmp_path):
         """count_runs() respects project_slug namespace."""
@@ -69,8 +69,8 @@ class TestLogStreamNamespace:
 
         stream = LogStream(log_root=tmp_path / "logs", project_slug="demo")
         # Create some fake run files
-        log_dir = tmp_path / "logs" / "demo" / "imp-100"
+        log_dir = tmp_path / "logs" / "demo" / "issue-100"
         log_dir.mkdir(parents=True)
         (log_dir / "implement-run1.ndjson").touch()
         (log_dir / "implement-run2.ndjson").touch()
-        assert stream.count_runs("imp-100", "implement") == 2
+        assert stream.count_runs("issue-100", "implement") == 2

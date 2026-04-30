@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from autosymph.config import (
     ClaudeConfig,
     StateConfig,
@@ -16,10 +14,13 @@ from autosymph.models import (
     LATEST,
     StaleModelRef,
     collect_stale_models,
+    compute_registry_update,
     family_of,
     is_alias,
     is_stale,
+    pick_latest_per_family,
     suggested_replacement,
+    write_models_py,
 )
 
 
@@ -219,14 +220,6 @@ class TestCollectStaleModels:
 
 
 # -- /v1/models response → LATEST mapping --
-
-
-from autosymph.models import (
-    RegistryUpdate,
-    compute_registry_update,
-    pick_latest_per_family,
-    write_models_py,
-)
 
 
 def _model(id_: str, created_at: str) -> dict:

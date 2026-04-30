@@ -1,4 +1,4 @@
-"""Tests for ClaudeRunner — IMP-356 R11 session-start log line + argv extraction.
+"""Tests for ClaudeRunner — ISSUE-356 R11 session-start log line + argv extraction.
 
 The runner is where the `claude session start:` audit log lives so that the
 recorded `model=...` reflects the literal --model argv (not the input dict).
@@ -9,8 +9,6 @@ runner_config["model"] from the rendered cmd.
 from __future__ import annotations
 
 import logging
-
-import pytest
 
 from autosymph.runners.claude import ClaudeRunner
 
@@ -69,16 +67,16 @@ class TestSessionStartLogLine:
                 workspace_path="/tmp",
                 config={
                     "model": "claude-haiku-4-5-20251001",
-                    "identifier": "IMP-356",
+                    "identifier": "ISSUE-356",
                     "workflow_state": "autoplan",
                     "prompt_path": "prompts/autoplan.md",
                 },
             ))
 
         lines = [r.getMessage() for r in caplog.records]
-        line = next((l for l in lines if "claude session start:" in l), None)
+        line = next((msg for msg in lines if "claude session start:" in msg), None)
         assert line is not None, f"session-start log line missing — got {lines!r}"
-        assert "identifier=IMP-356" in line
+        assert "identifier=ISSUE-356" in line
         assert "state=autoplan" in line
         assert "model=claude-haiku-4-5-20251001" in line
         assert "prompt=prompts/autoplan.md" in line

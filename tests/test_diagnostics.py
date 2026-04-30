@@ -1,4 +1,4 @@
-"""Tests for autosymph.diagnostics.check_linear_states (IMP-356).
+"""Tests for autosymph.diagnostics.check_linear_states (ISSUE-356).
 
 Covers the three failure modes from AC10:
   (a) configured Autoplan state missing from workspace

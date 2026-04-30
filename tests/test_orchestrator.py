@@ -1,4 +1,4 @@
-"""Tests for orchestrator state-resolution and Linear-status mapping (IMP-356).
+"""Tests for orchestrator state-resolution and Linear-status mapping (ISSUE-356).
 
 Specifically covers:
 - `_resolve_workflow_state` routes Autoplan → "autoplan"
@@ -230,14 +230,14 @@ class TestClaudeSessionStartLogLine:
         with caplog.at_level(logging.INFO, logger="autosymph.runners.claude"):
             logger.info(
                 "claude session start: identifier=%s state=%s model=%s prompt=%s",
-                "IMP-TEST-1",
+                "ISSUE-TEST-1",
                 "autoplan",
                 "claude-opus-4-7",
                 "prompts/autoplan.md",
             )
         msgs = [r.getMessage() for r in caplog.records]
         line = next(m for m in msgs if "claude session start:" in m)
-        assert "identifier=IMP-TEST-1" in line
+        assert "identifier=ISSUE-TEST-1" in line
         assert "state=autoplan" in line
         assert "model=claude-opus-4-7" in line
         assert "prompt=prompts/autoplan.md" in line
@@ -397,7 +397,7 @@ class TestInvestigatingNotAutosymphCoercion:
     `not_autosymph`, the signal must be allowed from both `verify` AND
     `verify_review` failed_states.
 
-    Regression: the IMP-385 cycle was caused by coercing not_autosymph from
+    Regression: the ISSUE-385 cycle was caused by coercing not_autosymph from
     verify_review → escalate → blocked, even though the investigator had
     correctly determined the code was fine and only needed re-verification.
     """
@@ -428,7 +428,7 @@ class TestInvestigatingNotAutosymphCoercion:
 
     def test_not_autosymph_from_verify_review_returns_not_autosymph(self):
         """Regression: verify_review failed → investigator says not_autosymph
-        must propagate. If this gets coerced to ESCALATE, the IMP-385 cycle
+        must propagate. If this gets coerced to ESCALATE, the ISSUE-385 cycle
         bug returns: a falsely-rejected verify_review will land in blocked."""
         from autosymph.state_machine import Signal
         orch, tracked = self._setup(failed_state="verify_review")
