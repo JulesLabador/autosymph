@@ -413,6 +413,20 @@ def status(port: int, as_json: bool) -> None:
     click.echo(f"\n{total_active} active | {completed} completed today | {failed} failed today")
 
 
+@main.command("init")
+def init_cmd() -> None:
+    """Interactive onboarding wizard. Bootstraps a fresh device + project config.
+
+    Walks through Linear API key validation, project selection, workflow-state
+    creation (with explicit confirmation), repo-path collection, optional
+    simulator + Braintrust setup, and writes the device + project YAMLs and
+    local.env atomically. Designed for fresh-setup-only — re-running on a
+    configured device exits with guidance.
+    """
+    from autosymph.wizard.runner import run_wizard
+    sys.exit(run_wizard())
+
+
 @main.group("config")
 def config_cmd() -> None:
     """Configuration commands."""
