@@ -387,3 +387,16 @@ scripts/install-skills.sh --dry-run
 uv run pytest -q
 ```
 
+## Prior Art
+
+autosymph was inspired by [symphony](https://github.com/odysseus0/symphony)
+(itself a fork of [openai/symphony](https://github.com/openai/symphony)),
+which pioneered the Linear-backed, state-machine-driven agent orchestration
+pattern. autosymph is an independent Python reimplementation with a
+different runtime model, skill set, and verification pipeline; it shares no
+source code with either upstream project.
+
+## License
+
+autosymph is released under the [MIT License](LICENSE).
+
