@@ -6,7 +6,7 @@ loops; autosymph does not provide or proxy Braintrust credentials.
 Install: pip install 'autosymph[tracing]'
 
 Trace structure:
-    IMP-312-implement-run1              (run span — scores, metrics, summary)
+    ISSUE-123-implement-run1            (run span — scores, metrics, summary)
       ├── Bash: git log --oneline -5    (tool span — input, output, intent)
       ├── Skill: github-pr              (tool span — input, output, intent)
       └── Bash: gh pr create            (tool span — input, output, intent)

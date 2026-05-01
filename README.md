@@ -97,39 +97,19 @@ From a fresh checkout:
 uv sync --extra dev
 
 # Install or inspect skills.
-scripts/install-skills.sh --dry-run
 scripts/install-skills.sh --target "$HOME/.autosymph/skills"
 
-# Create config directories.
-mkdir -p ~/.autosymph/config/devices ~/.autosymph/config/projects
+# Run the interactive onboarding wizard. Validates your Linear API key,
+# offers to create any missing workflow states, detects iOS simulators,
+# and writes ~/.autosymph/config/{devices,projects}/*.yaml + local.env.
+uv run autosymph init
 
-# Copy examples.
-cp examples/config/devices/hostname.yaml.example \
-  ~/.autosymph/config/devices/$(hostname -s | tr '[:upper:]' '[:lower:]').yaml
-cp examples/config/projects/web-project.yaml.example \
-  ~/.autosymph/config/projects/web-app.yaml
-cp examples/config/local.env.example ~/.autosymph/config/local.env
-```
-
-Edit the copied files:
-
-- In the device config, set each project repo path.
-- In the project config, set the exact Linear project name.
-- Set `prompts.root` to this checkout's `prompts/` directory.
-- Put real secrets in your shell or `~/.autosymph/config/local.env`.
-
-Validate:
-
-```bash
-uv run autosymph config check ~/.autosymph/config/projects/web-app.yaml
-scripts/check-skills.sh
-```
-
-Run:
-
-```bash
+# Run.
 uv run autosymph start
 ```
+
+The wizard handles the common case (fresh device, single project). For
+manual setup or air-gapped environments, see [docs/manual-setup.md](docs/manual-setup.md).
 
 For a one-off config file:
 

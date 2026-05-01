@@ -171,8 +171,8 @@ class ServerConfig(BaseModel):
 
 class LinearStatesConfig(BaseModel):
     todo: str = "Ready"
-    autoplan: str | None = None  # Optional — "Autoplan" (IMP-356); only polled when set
-    active: str = "In Progress"
+    autoplan: str | None = None  # Optional — e.g. "Autoplan"; only polled when set
+    active: str = "Implementing"
     verifying: str = "Verifying"
     verify_review: str | None = None  # Optional — "Reviewing Evidence"
     investigating: str = "Investigating"

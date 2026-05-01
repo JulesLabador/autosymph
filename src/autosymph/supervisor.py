@@ -145,7 +145,7 @@ class Supervisor:
             self._create_orchestrator(i) for i in range(len(self._configs))
         ]
 
-        # IMP-356: validate Linear workspace state per-orchestrator if autoplan configured.
+        # Validate Linear workspace state per-orchestrator if autoplan configured.
         # Runs once at startup; raises ConfigError to abort the supervisor on any project.
         from autosymph.diagnostics import check_linear_states, ConfigError as DiagError
         for orch in self._orchestrators:

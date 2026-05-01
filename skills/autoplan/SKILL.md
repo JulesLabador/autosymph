@@ -33,7 +33,7 @@ Research, Interview, Premortem, PRD, (optional) cross-harness review.
 | Flags | Interview | Review | Use case |
 |-------|-----------|--------|----------|
 | (none) | User answers | No review | Quick planning with user |
-| `--auto` | Preset question harness answers | No review | Stokowski autoplan, no human |
+| `--auto` | Preset question harness answers | No review | Headless autoplan, no human |
 | `--codex-review` | User answers | Configured review harness loop | Formal planning with user |
 | `--auto --codex-review` | Preset question harness answers | Configured review harness loop | Full autonomous planning |
 | `codex --auto --codex-review` | Claude answers | Claude loop over Codex plan | Full autonomous planning with flipped harnesses |
@@ -109,7 +109,7 @@ Run research skills before interviewing. Choose inline (familiar) or subagent (u
 Invoke the `codebase-explore` skill. Focus on the feature area from Step 1.
 
 ### 2.2 Documentation Explore
-Invoke the `documentation-explore` skill. Include my-knowledge repo search.
+Invoke the `documentation-explore` skill. Include any local knowledge-base repos the user has configured.
 
 ### 2.3 Web Research (optional)
 Invoke the `web-research` skill only if the feature involves unfamiliar technology. Skip if well-understood.
@@ -567,7 +567,7 @@ Issue moved to Ready.
 
 ### 7.9 Keep local files
 
-Leave `PRD.md` and `task-list.md` for `/ralph`. Do NOT commit.
+Leave `PRD.md` and `task-list.md` in the workspace for the implementation agent to pick up. Do NOT commit.
 
 ---
 

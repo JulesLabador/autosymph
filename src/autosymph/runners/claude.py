@@ -51,7 +51,7 @@ class ClaudeRunner(AgentRunner):
         """Spawn claude CLI and stream NDJSON events. Prompt piped via stdin.
 
         ``config`` may include optional metadata used only for logging:
-        - ``identifier`` (str): Linear issue identifier (e.g. IMP-356)
+        - ``identifier`` (str): Linear issue identifier (e.g. ISSUE-123)
         - ``workflow_state`` (str): autosymph workflow state name
         - ``prompt_path`` (str): path of the agent prompt file
         These are not required for execution; they are emitted in the
@@ -59,9 +59,9 @@ class ClaudeRunner(AgentRunner):
         the issue, state, model, and prompt with the actual ``--model`` argv.
         """
         cmd = self._build_command(config, session_id)
-        # IMP-356 R11: structured session-start log line emitted at the actual
-        # subprocess spawn site, naming the literal --model argv so AC3/AC6/AC7/AC8
-        # are verifiable from logs even if a future refactor diverges
+        # Structured session-start log line emitted at the actual subprocess
+        # spawn site, naming the literal --model argv so the resolved model is
+        # verifiable from logs even if a future refactor diverges
         # config["model"] from the rendered cmd.
         rendered_model = self._extract_arg(cmd, "--model")
         logger.info(

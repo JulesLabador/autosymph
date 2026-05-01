@@ -10,7 +10,7 @@ attachments. Handles the full pipeline: capture → resize → encode → upload
 
 ## When to Use
 
-- During `/ralph` verification (iOS or web)
+- During the autosymph verify state (iOS or web)
 - When the verify agent needs to upload evidence to Linear
 - When the implement agent embeds artifacts in Linear comments
 - Any time you have a local screenshot that needs to be in a Linear comment

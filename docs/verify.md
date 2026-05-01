@@ -59,7 +59,7 @@ Issues labeled `risk:low` skip human review entirely (`complete_low_risk → fin
 
 ### Fail → investigating, not implement
 
-Previously, verify failures routed back to implement (blind retry). Now they route to investigating, which diagnoses whether the failure is infrastructure (sim not booted), code (tests actually fail), or environment (credentials missing). This prevents the IMP-318 pattern of 17 identical retries.
+Previously, verify failures routed back to implement (blind retry). Now they route to investigating, which diagnoses whether the failure is infrastructure (sim not booted), code (tests actually fail), or environment (credentials missing). This prevents the "17 identical retries" pattern, where a single broken fixture or missing label would burn the entire retry budget without anyone noticing.
 
 ### Evidence is required
 

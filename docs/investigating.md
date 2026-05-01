@@ -6,7 +6,7 @@ When any agent state fails (implement, verify, rework, or finalize), autosymph t
 
 ## Why
 
-IMP-318 ran 17 identical verify failures over 25 minutes because the resource pool didn't acquire an iOS simulator (label mismatch — auto-detection wasn't implemented). The agent had no instructions for what to do when infrastructure breaks, so it flailed and timed out, 17 times. The NDJSON traces showed the exact same tool calls every run. Zero learning between retries.
+A real example that motivated this state: a single issue ran 17 identical verify failures over 25 minutes because the resource pool didn't acquire an iOS simulator (label mismatch — auto-detection wasn't implemented). The agent had no instructions for what to do when infrastructure breaks, so it flailed and timed out, 17 times. The NDJSON traces showed the exact same tool calls every run. Zero learning between retries.
 
 The investigating state exists to make the system debug itself the way a human would: read the error, figure out why, fix the root cause, test it, then retry.
 
@@ -149,7 +149,7 @@ investigating:
 
 ## Connections
 
-- **blocked gate** — where escalated issues land. Human approves to retry. Will fire notifications once IMP-321 (notification channels) is built.
+- **blocked gate** — where escalated issues land. Human approves to retry. Will fire notifications once notification channels are built.
 - **all agent states** — implement, verify, rework, and finalize all have `fail: investigating`.
 - **implement state** — receives `not_autosymph` issues that need code rework, not infrastructure debugging.
 
@@ -178,12 +178,12 @@ occurrence** (not after 3+ retries). Detects:
 
 ### Why first-failure detection matters
 
-IMP-360 burned 6 verify runs (~56 min, ~85K output tokens) before the screenshot
-pipeline was diagnosed. The infra gap was detectable on run 1: `sips` was
-permission-denied, screenshots were resized to 138x300. The verify_review agent
-saw this but could only REJECT back to verify, which retried the same broken
-pipeline. Structify short-circuits this: one rejection, one investigation, one
-fix, then retry.
+A real example: a single issue burned 6 verify runs (~56 min, ~85K output tokens)
+before the screenshot pipeline was diagnosed. The infra gap was detectable on
+run 1: `sips` was permission-denied, screenshots were resized to 138x300. The
+verify_review agent saw this but could only REJECT back to verify, which
+retried the same broken pipeline. Structify short-circuits this: one rejection,
+one investigation, one fix, then retry.
 
 ### Orchestrator routing
 

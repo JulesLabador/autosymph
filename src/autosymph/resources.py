@@ -243,7 +243,7 @@ class ResourcePool:
         """Acquire all resources needed for an issue based on state and context.
 
         Args:
-            issue_id: The Linear issue ID (e.g. ``imp-100``).
+            issue_id: The Linear issue ID (e.g. ``issue-123``).
             workflow_state: Current workflow state name.
             labels: Issue labels for resource hints.
             workspace_path: Path to the agent workspace.
