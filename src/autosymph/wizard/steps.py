@@ -204,7 +204,7 @@ def step_collect_linear_key(state: WizardState, prompter: Prompter) -> WizardSta
             try:
                 return await check_client.resolve_viewer()
             finally:
-                await check_client._client.aclose()
+                await check_client.close()
 
         try:
             viewer_id = asyncio.run(_probe())
